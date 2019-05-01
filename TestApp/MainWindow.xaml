@@ -5,8 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        DataContext="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Context}"
+        FocusManager.FocusedElement="{Binding ElementName=InputText}">
     <Grid>
-        
+        <StackPanel HorizontalAlignment="Left">
+            <TextBox Name="InputText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                     Width="200" />
+            <TextBlock Text="{Binding Text}" Width="{Binding ElementName=InputText, Path=ActualWidth}" />
+            <Label Content="{Binding Text}" Width="{Binding ElementName=InputText, Path=ActualWidth}" />
+            <Separator />
+            <Button Command="{Binding TestCommand}">TestCommand</Button>
+        </StackPanel>
     </Grid>
 </Window>
