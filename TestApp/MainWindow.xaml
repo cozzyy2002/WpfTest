@@ -4,18 +4,80 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestApp"
+        xmlns:model="clr-namespace:TestApp.Model"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         DataContext="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Context}"
         FocusManager.FocusedElement="{Binding ElementName=InputText}">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="TestType" MethodName="GetValues" ObjectType="sys:Enum">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="model:TestType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <Style TargetType="Separator">
+            <Setter Property="Margin" Value="2,5" />
+        </Style>
+    </Window.Resources>
     <Grid>
-        <StackPanel HorizontalAlignment="Left">
-            <TextBox Name="InputText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
-                     Width="200" />
-            <TextBlock Text="{Binding Text}" Width="{Binding ElementName=InputText, Path=ActualWidth}" />
-            <Label Content="{Binding Text}" Width="{Binding ElementName=InputText, Path=ActualWidth}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel HorizontalAlignment="Left" Width="200">
+            <TextBox Name="InputText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="{Binding Text}" />
+            <Label Content="{Binding Text}" />
             <Separator />
             <Button Command="{Binding TestCommand}">TestCommand</Button>
+            <CheckBox IsChecked="{Binding TestCheckBox}">TestCheckBox</CheckBox>
+            <ComboBox ItemsSource="{Binding Source={StaticResource TestType}}"
+                      SelectedItem="{Binding TestType}"/>
+            <Separator />
+            <TextBlock DataContext="{Binding Path=SelectedListItem}"
+                       Margin="4,0">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                <Setter Property="Foreground" Value="Transparent" />
+                                <Setter Property="Background" Value="LightGray" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+                <Run Text="{Binding Type}" />,
+                <Run Text="{Binding Name}" />
+            </TextBlock>
         </StackPanel>
+
+        <TabControl Grid.Column="1" SelectionChanged="TabControl_SelectionChanged">
+            <TabItem Header="tab 1">
+                <ListView Name="ListItemOneList"
+                          ItemsSource="{Binding Path=ListItemOneList}"
+                          SelectedItem="{Binding SelectedListItem, Mode=OneWayToSource}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Type}" Header="Type" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Header="Name" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Age}" Header="Age" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+            <TabItem Header="tab 2">
+                <ListView Name="ListItemTwoList"
+                          ItemsSource="{Binding Path=ListItemTwoList}"
+                          SelectedItem="{Binding SelectedListItem, Mode=OneWayToSource}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Type}" Header="Type" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Header="Name" Width="100" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
